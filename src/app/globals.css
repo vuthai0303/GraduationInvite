@@ -1,26 +1,180 @@
 @import "tailwindcss";
 
+/* ===== BIẾN MÀU CHỦ ĐẠO ===== */
+/* Sử dụng hồng pastel + xanh navy + vàng gold cho phong cách trẻ trung, Gen Z */
 :root {
-  --background: #ffffff;
-  --foreground: #171717;
+  --background: #fdf2f8;
+  --foreground: #1e1b4b;
+  --pink-primary: #ec4899;
+  --pink-light: #fbcfe8;
+  --pink-pastel: #fce7f3;
+  --navy: #1e1b4b;
+  --navy-light: #312e81;
+  --gold: #f59e0b;
+  --gold-light: #fde68a;
+  --purple: #8b5cf6;
+  --green-accent: #10b981;
 }
 
 @theme inline {
   --color-background: var(--background);
   --color-foreground: var(--foreground);
+  --color-pink-primary: var(--pink-primary);
+  --color-pink-light: var(--pink-light);
+  --color-pink-pastel: var(--pink-pastel);
+  --color-navy: var(--navy);
+  --color-navy-light: var(--navy-light);
+  --color-gold: var(--gold);
+  --color-gold-light: var(--gold-light);
+  --color-purple: var(--purple);
+  --color-green-accent: var(--green-accent);
   --font-sans: var(--font-geist-sans);
   --font-mono: var(--font-geist-mono);
-}
-
-@media (prefers-color-scheme: dark) {
-  :root {
-    --background: #0a0a0a;
-    --foreground: #ededed;
-  }
 }
 
 body {
   background: var(--background);
   color: var(--foreground);
   font-family: Arial, Helvetica, sans-serif;
+  overflow-x: hidden;
+}
+
+/* ===== CUSTOM SCROLLBAR ===== */
+/* Thanh cuộn tùy chỉnh cho phong cách đồng nhất */
+::-webkit-scrollbar {
+  width: 8px;
+}
+::-webkit-scrollbar-track {
+  background: var(--pink-pastel);
+}
+::-webkit-scrollbar-thumb {
+  background: var(--pink-primary);
+  border-radius: 4px;
+}
+
+/* ===== ANIMATION KEYFRAMES ===== */
+
+/* Hiệu ứng pulse nhấp nháy cho nút CTA chính */
+@keyframes pulse-glow {
+  0%, 100% {
+    box-shadow: 0 0 20px rgba(236, 72, 153, 0.4);
+  }
+  50% {
+    box-shadow: 0 0 40px rgba(236, 72, 153, 0.8), 0 0 60px rgba(236, 72, 153, 0.3);
+  }
+}
+
+/* Hiệu ứng lắc lư vui nhộn cho icon/emoji */
+@keyframes wiggle {
+  0%, 100% { transform: rotate(0deg); }
+  15% { transform: rotate(5deg); }
+  30% { transform: rotate(-5deg); }
+  45% { transform: rotate(4deg); }
+  60% { transform: rotate(-4deg); }
+  75% { transform: rotate(2deg); }
+  90% { transform: rotate(-2deg); }
+}
+
+/* Hiệu ứng nảy lên xuống cho mũ cử nhân */
+@keyframes bounce-hat {
+  0%, 100% { transform: translateY(0) rotate(-15deg); }
+  50% { transform: translateY(-15px) rotate(-5deg); }
+}
+
+/* Hiệu ứng float nhẹ nhàng cho các element trang trí */
+@keyframes float {
+  0%, 100% { transform: translateY(0px); }
+  50% { transform: translateY(-20px); }
+}
+
+/* Hiệu ứng gradient di chuyển cho background hero */
+@keyframes gradient-shift {
+  0% { background-position: 0% 50%; }
+  50% { background-position: 100% 50%; }
+  100% { background-position: 0% 50%; }
+}
+
+/* Hiệu ứng shine/sáng lóa chạy qua cho vé/ticket */
+@keyframes shine {
+  0% { left: -100%; }
+  50% { left: 100%; }
+  100% { left: 100%; }
+}
+
+/* Hiệu ứng sparkle nhấp nháy cho các ngôi sao trang trí */
+@keyframes sparkle {
+  0%, 100% { opacity: 0; transform: scale(0); }
+  50% { opacity: 1; transform: scale(1); }
+}
+
+/* ===== UTILITY CLASSES ===== */
+.animate-pulse-glow {
+  animation: pulse-glow 2s ease-in-out infinite;
+}
+
+.animate-wiggle {
+  animation: wiggle 1s ease-in-out infinite;
+}
+
+.animate-bounce-hat {
+  animation: bounce-hat 2s ease-in-out infinite;
+}
+
+.animate-float {
+  animation: float 3s ease-in-out infinite;
+}
+
+.animate-gradient {
+  background-size: 200% 200%;
+  animation: gradient-shift 4s ease infinite;
+}
+
+/* ===== VÉ MÁY BAY / TICKET STYLES ===== */
+/* Tạo hiệu ứng "vé xé" với các hình tròn ở mép */
+.ticket-notch::before,
+.ticket-notch::after {
+  content: '';
+  position: absolute;
+  width: 24px;
+  height: 24px;
+  background: var(--background);
+  border-radius: 50%;
+  top: 50%;
+  transform: translateY(-50%);
+}
+.ticket-notch::before {
+  left: -12px;
+}
+.ticket-notch::after {
+  right: -12px;
+}
+
+/* Đường kẻ nét đứt phân cách trên vé */
+.ticket-divider {
+  border-left: 2px dashed rgba(236, 72, 153, 0.3);
+}
+
+/* ===== EMOJI RAIN EFFECT ===== */
+/* Dùng cho hiệu ứng mưa emoji trên hero section */
+.emoji-rain {
+  position: absolute;
+  font-size: 1.5rem;
+  animation: float 3s ease-in-out infinite;
+  pointer-events: none;
+  opacity: 0.6;
+}
+
+/* ===== RESPONSIVE ADJUSTMENTS ===== */
+@media (max-width: 640px) {
+  .ticket-notch::before,
+  .ticket-notch::after {
+    width: 16px;
+    height: 16px;
+  }
+  .ticket-notch::before {
+    left: -8px;
+  }
+  .ticket-notch::after {
+    right: -8px;
+  }
 }
