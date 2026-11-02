@@ -8,7 +8,6 @@ import {
   EVENT_TIME,
   GOOGLE_MAPS_URL,
   GRADUATE_NAME,
-  GRADUATE_NICKNAME,
   POLAROID_PHOTOS,
   UNIVERSITY,
   VENUE_ADDRESS,
@@ -25,7 +24,7 @@ import {
   Quote,
   Sparkles
 } from "lucide-react";
-import { useCallback, useState } from "react";
+import { useCallback } from "react";
 import RSVPSection from "../RSVPSection";
 import Countdown from "./Countdown";
 import GraduationAvatar from "./GraduationAvatar";
@@ -48,9 +47,8 @@ export default function InvitationCard({
   guestName,
   guestRole,
   guestMessage,
-  guestCode,
 }: InvitationCardProps) {
-  const [copied, setCopied] = useState(false);
+  // const [copied, setCopied] = useState(false);
 
   /**
    * Bắn pháo hoa ăn mừng không giới hạn
@@ -64,9 +62,7 @@ export default function InvitationCard({
     });
   }, []);
 
-  /**
-   * Sao chép link thiệp cá nhân hóa vào Clipboard
-   */
+  /*
   const handleCopyLink = useCallback(() => {
     if (typeof window !== "undefined") {
       const url = new URL(window.location.href);
@@ -80,11 +76,7 @@ export default function InvitationCard({
     }
   }, [guestCode]);
 
-  /**
-   * Tạo và tải file .ics để thêm sự kiện vào Google / Apple Calendar
-   */
   const handleAddToCalendar = useCallback(() => {
-    // 14/11/2026 15:30 GMT+7 = 20261114T083000Z
     const icsContent = [
       "BEGIN:VCALENDAR",
       "VERSION:2.0",
@@ -110,6 +102,7 @@ export default function InvitationCard({
     link.click();
     document.body.removeChild(link);
   }, []);
+  */
 
   return (
     <div className="w-full max-w-4xl mx-auto px-4 py-8 md:py-16">
@@ -180,11 +173,11 @@ export default function InvitationCard({
           {/* PHẦN 2: NHÂN VẬT CỬ NHÂN TƯƠNG TÁC + NỘI DUNG TỐT NGHIỆP  */}
           {/* ========================================================= */}
           <div className="flex flex-col md:flex-row items-center gap-8 md:gap-12">
-            {/* Avatar cử nhân (Lớp body + nón + kính thug life + speech bubble) */}
+            {/* Avatar cử nhân (Tóc dài, váy tốt nghiệp nữ, hoa & bằng cử nhân) */}
             <div className="shrink-0 flex flex-col items-center">
               <GraduationAvatar quotes={AVATAR_QUOTES} />
               <p className="text-[11px] text-slate-400 mt-2 italic">
-                👆 Chạm vào cử nhân để troll / đeo kính!
+                👆 Chạm vào cử nhân để nghe tâm sự hài hước! 🎓
               </p>
             </div>
 

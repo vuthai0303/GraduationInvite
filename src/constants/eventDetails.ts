@@ -28,6 +28,16 @@ export const DEGREE = "Cử nhân Kế toán (Bachelor of Accounting)";
 /** Tên trường đại học */
 export const UNIVERSITY = "Trường Đại học Mở TP.HCM";
 
+/**
+ * Đường dẫn ảnh chân dung mặt thật của cử nhân (dùng cho avatar cử nhân).
+ * Hướng dẫn:
+ * 1. Copy file ảnh chụp mặt vào thư mục: public/photos/ (hoặc public/)
+ *    Ví dụ: public/photos/quynh-nhien-avatar.png
+ * 2. Điền đường dẫn tại đây, ví dụ: "/photos/quynh-nhien-avatar.png"
+ * 3. Nếu để trống (""), avatar sẽ tự động hiển thị khuôn hình bầu placeholder dễ thương.
+ */
+export const GRADUATE_AVATAR_IMAGE = "/quynh-nhien.png";
+
 // =============================================
 // ===== THỜI GIAN & ĐỊA ĐIỂM SỰ KIỆN =====
 // =============================================
