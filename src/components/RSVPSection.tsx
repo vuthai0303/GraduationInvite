@@ -1,19 +1,18 @@
 "use client";
 
-import { useState, useRef, useCallback, useEffect } from "react";
-import { motion, AnimatePresence, useInView } from "framer-motion";
 import confetti from "canvas-confetti";
+import { AnimatePresence, motion, useInView } from "framer-motion";
 import {
-  Heart,
-  Send,
-  PartyPopper,
   Ban,
-  MessageCircle,
-  Smartphone,
-  X,
-  Gift,
   Check,
+  Gift,
+  Heart,
+  MessageCircle,
+  Send,
+  Smartphone,
+  X
 } from "lucide-react";
+import { useCallback, useEffect, useRef, useState } from "react";
 
 /**
  * RSVP Section - Xác nhận tham dự & Lưu bút
@@ -142,7 +141,7 @@ export default function RSVPSection() {
   return (
     <section
       ref={sectionRef}
-      className="py-16 md:py-24 px-4 bg-gradient-to-b from-white via-pink-pastel/30 to-pink-pastel relative overflow-hidden"
+      className="px-4 relative overflow-hidden pb-6"
     >
       {/* Hình trang trí */}
       <div className="absolute top-10 right-10 text-6xl md:text-8xl opacity-5 pointer-events-none select-none">
@@ -160,9 +159,9 @@ export default function RSVPSection() {
           transition={{ duration: 0.6 }}
           className="text-center mb-10 md:mb-14"
         >
-          <span className="text-sm md:text-base font-bold text-pink-primary uppercase tracking-widest">
+          {/* <span className="text-sm md:text-base font-bold text-pink-primary uppercase tracking-widest">
             💌 R.S.V.P
-          </span>
+          </span> */}
           <h2 className="text-3xl md:text-4xl lg:text-5xl font-extrabold text-navy mt-2">
             Xác Nhận{" "}
             <span className="text-pink-primary">Tham Dự</span>
@@ -199,13 +198,9 @@ export default function RSVPSection() {
                     whileHover={{ scale: 1.08, rotate: [0, -2, 2, 0] }}
                     whileTap={{ scale: 0.95 }}
                     onClick={handleAttend}
-                    className="w-full sm:w-auto bg-gradient-to-r from-green-400 to-emerald-500 text-white font-bold px-6 md:px-8 py-4 rounded-2xl shadow-lg hover:shadow-xl transition-shadow cursor-pointer text-sm md:text-base"
+                    className="w-full sm:w-auto bg-linear-to-r from-green-400 to-emerald-500 text-white font-bold px-6 md:px-8 py-4 rounded-2xl shadow-lg hover:shadow-xl transition-shadow cursor-pointer text-sm md:text-base"
                   >
-                    <PartyPopper className="w-5 h-5 inline mr-2" />
-                    Chắc chắn có mặt, mang bụng đói đi ăn cỗ!
-                    <span className="block text-xs mt-1 opacity-80">
-                      (Free đồ ăn, ai mà bỏ!)
-                    </span>
+                    Chắc chắn có mặt! 💝
                   </motion.button>
 
                   {/* === NÚT TỪ CHỐI - CHẠY TRỐN KHI HOVER === */}
@@ -221,7 +216,7 @@ export default function RSVPSection() {
                     }}
                     onMouseEnter={handleDeclineHover} // Chạy trốn khi di chuột vào
                     onClick={handleDeclineClick} // Hiện popup Momo nếu bấm được
-                    className="w-full sm:w-auto bg-gradient-to-r from-gray-300 to-gray-400 text-gray-700 font-bold px-6 md:px-8 py-4 rounded-2xl shadow cursor-pointer text-sm md:text-base relative"
+                    className="w-full sm:w-auto bg-linear-to-r from-gray-300 to-gray-400 text-gray-700 font-bold px-6 md:px-8 py-4 rounded-2xl shadow cursor-pointer text-sm md:text-base relative"
                   >
                     <Ban className="w-5 h-5 inline mr-2" />
                     {/* Trên mobile: đổi text khi cố bấm nhiều lần */}
@@ -346,7 +341,7 @@ export default function RSVPSection() {
                   type="submit"
                   whileHover={{ scale: 1.03 }}
                   whileTap={{ scale: 0.97 }}
-                  className="w-full bg-gradient-to-r from-pink-primary to-purple text-white font-bold py-3.5 rounded-xl shadow-lg hover:shadow-xl transition-shadow cursor-pointer flex items-center justify-center gap-2"
+                  className="w-full bg-linear-to-r from-pink-primary to-purple text-white font-bold py-3.5 rounded-xl shadow-lg hover:shadow-xl transition-shadow cursor-pointer flex items-center justify-center gap-2"
                 >
                   <Send className="w-5 h-5" />
                   Gửi Lời Chúc

@@ -1,17 +1,13 @@
 "use client";
 
 import { Envelope } from "@/components/Envelope";
-import EventTicket from "@/components/EventTicket";
 import Footer from "@/components/Footer";
 import { InvitationCard } from "@/components/Invitation";
-import MiniGame from "@/components/MiniGame";
-import RSVPSection from "@/components/RSVPSection";
-import Timeline from "@/components/Timeline";
 import { getGuestByCode } from "@/constants/guests";
 import { AnimatePresence, motion } from "framer-motion";
 import { Mail } from "lucide-react";
 import { useSearchParams } from "next/navigation";
-import { Suspense, useRef, useState } from "react";
+import { Suspense, useState } from "react";
 
 /**
  * Component giao diện chính xử lý logic đọc tham số URL và hiển thị trạng thái thiệp
@@ -30,18 +26,6 @@ function GraduationInviteApp() {
   // Trạng thái mở phong bì thư (mặc định là false - phong bì đóng niêm phong)
   const [isOpened, setIsOpened] = useState(false);
 
-  // Ref cuộn xuống các section nội dung mở rộng (Timeline, Ticket, Game, RSVP)
-  const moreContentRef = useRef<HTMLDivElement>(null);
-
-  /**
-   * Cuộn mượt xuống phần nội dung mở rộng
-   */
-  const handleExploreMore = () => {
-    moreContentRef.current?.scrollIntoView({
-      behavior: "smooth",
-      block: "start",
-    });
-  };
 
   /**
    * Đóng phong bì để xem lại hiệu ứng mở thư 3D
@@ -52,7 +36,7 @@ function GraduationInviteApp() {
   };
 
   return (
-    <main className="min-h-screen bg-gradient-to-b from-pink-50 via-purple-50/40 to-pink-50 text-navy relative overflow-x-hidden">
+    <main className="min-h-screen bg-linear-to-b from-pink-50 via-purple-50/40 to-pink-pastel text-navy relative overflow-x-hidden">
       <AnimatePresence mode="wait">
         {!isOpened ? (
           /* ========================================================= */
@@ -101,26 +85,19 @@ function GraduationInviteApp() {
               guestRole={guestInfo.role}
               guestMessage={guestInfo.customMessage}
               guestCode={guestInfo.code}
-              onExploreMore={handleExploreMore}
             />
 
-            {/* CÁC SECTION MỞ RỘNG TIẾP NỐI */}
-            <div ref={moreContentRef} className="space-y-6">
-              {/* Hành trình "Sống sót" Kế toán 4 năm */}
-              <Timeline />
+            {/* Hành trình "Sống sót" Kế toán 4 năm */}
+            {/* <Timeline /> */}
 
-              {/* Vé máy bay đến lễ tốt nghiệp (Boarding Pass & Google Maps) */}
-              <EventTicket />
+            {/* Vé máy bay đến lễ tốt nghiệp (Boarding Pass & Google Maps) */}
+            {/* <EventTicket /> */}
 
-              {/* Mini-game Bắt lỗi sai Nợ - Có */}
-              <MiniGame />
+            {/* Mini-game Bắt lỗi sai Nợ - Có */}
+            {/* <MiniGame /> */}
 
-              {/* Xác nhận tham dự (Nút trốn lầy lội + Momo) & Lưu bút */}
-              <RSVPSection />
-
-              {/* Chân trang đếm ngược và cảm ơn */}
-              <Footer />
-            </div>
+            {/* Chân trang đếm ngược và cảm ơn */}
+            <Footer />
           </motion.div>
         )}
       </AnimatePresence>

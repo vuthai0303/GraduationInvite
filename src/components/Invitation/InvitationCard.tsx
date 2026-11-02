@@ -1,45 +1,41 @@
 "use client";
 
-import { useState, useCallback } from "react";
-import { motion } from "framer-motion";
-import confetti from "canvas-confetti";
 import {
-  Calendar,
-  Clock,
-  MapPin,
-  PartyPopper,
-  Share2,
-  Check,
-  CalendarPlus,
-  ExternalLink,
-  Sparkles,
-  Quote,
-  ChevronDown,
-} from "lucide-react";
-import GraduationAvatar from "./GraduationAvatar";
-import Countdown from "./Countdown";
-import PolaroidGallery from "./PolaroidGallery";
-import {
-  GRADUATE_NAME,
-  GRADUATE_NICKNAME,
+  AVATAR_QUOTES,
   DEGREE,
-  UNIVERSITY,
   EVENT_DATE,
   EVENT_DATE_STRING,
   EVENT_TIME,
-  VENUE_NAME,
-  VENUE_ADDRESS,
   GOOGLE_MAPS_URL,
-  AVATAR_QUOTES,
+  GRADUATE_NAME,
+  GRADUATE_NICKNAME,
   POLAROID_PHOTOS,
+  UNIVERSITY,
+  VENUE_ADDRESS,
+  VENUE_NAME,
 } from "@/constants/eventDetails";
+import confetti from "canvas-confetti";
+import { motion } from "framer-motion";
+import {
+  Calendar,
+  Clock,
+  ExternalLink,
+  MapPin,
+  PartyPopper,
+  Quote,
+  Sparkles
+} from "lucide-react";
+import { useCallback, useState } from "react";
+import RSVPSection from "../RSVPSection";
+import Countdown from "./Countdown";
+import GraduationAvatar from "./GraduationAvatar";
+import PolaroidGallery from "./PolaroidGallery";
 
 export interface InvitationCardProps {
   guestName: string;
   guestRole: string;
   guestMessage: string;
   guestCode?: string;
-  onExploreMore?: () => void;
 }
 
 /**
@@ -53,7 +49,6 @@ export default function InvitationCard({
   guestRole,
   guestMessage,
   guestCode,
-  onExploreMore,
 }: InvitationCardProps) {
   const [copied, setCopied] = useState(false);
 
@@ -126,7 +121,7 @@ export default function InvitationCard({
         className="bg-white/95 backdrop-blur-xl rounded-3xl md:rounded-[40px] shadow-2xl border border-pink-100 overflow-hidden relative"
       >
         {/* Dải ruy băng mạ vàng & hồng ở góc trên */}
-        <div className="h-3 w-full bg-gradient-to-r from-amber-400 via-pink-500 to-purple-600" />
+        <div className="h-3 w-full bg-linear-to-r from-amber-400 via-pink-500 to-purple-600" />
 
         <div className="p-6 sm:p-10 md:p-14 space-y-10 md:space-y-14">
           {/* ========================================================= */}
@@ -150,7 +145,7 @@ export default function InvitationCard({
 
             {/* Tên Khách Mời */}
             <h1 className="text-3xl sm:text-4xl md:text-5xl font-black text-navy mt-1">
-              <span className="bg-gradient-to-r from-pink-600 via-purple-700 to-navy bg-clip-text text-transparent">
+              <span className="bg-linear-to-r from-pink-600 via-purple-700 to-navy bg-clip-text text-transparent">
                 {guestName}
               </span>
             </h1>
@@ -186,7 +181,7 @@ export default function InvitationCard({
           {/* ========================================================= */}
           <div className="flex flex-col md:flex-row items-center gap-8 md:gap-12">
             {/* Avatar cử nhân (Lớp body + nón + kính thug life + speech bubble) */}
-            <div className="flex-shrink-0 flex flex-col items-center">
+            <div className="shrink-0 flex flex-col items-center">
               <GraduationAvatar quotes={AVATAR_QUOTES} />
               <p className="text-[11px] text-slate-400 mt-2 italic">
                 👆 Chạm vào cử nhân để troll / đeo kính!
@@ -212,10 +207,10 @@ export default function InvitationCard({
               </p>
 
               <div className="pt-2 flex flex-wrap gap-2 justify-center md:justify-start">
-                <span className="text-xs bg-slate-100 text-slate-700 font-semibold px-3 py-1 rounded-lg">
+                <span className="w-full sm:w-fit text-xs bg-slate-100 text-slate-700 font-semibold px-3 py-1 rounded-lg">
                   🏛️ {UNIVERSITY}
                 </span>
-                <span className="text-xs bg-slate-100 text-slate-700 font-semibold px-3 py-1 rounded-lg">
+                <span className="w-full sm:w-fit text-xs bg-slate-100 text-slate-700 font-semibold px-3 py-1 rounded-lg">
                   📊 {DEGREE}
                 </span>
               </div>
@@ -287,37 +282,37 @@ export default function InvitationCard({
                 href={GOOGLE_MAPS_URL}
                 target="_blank"
                 rel="noopener noreferrer"
-                className="flex-1 inline-flex items-center justify-center gap-2 bg-gradient-to-r from-emerald-500 to-teal-600 text-white font-bold py-3.5 px-6 rounded-2xl shadow-md hover:shadow-lg transition-all hover:scale-[1.02] active:scale-95 text-sm sm:text-base"
+                className="flex-1 inline-flex items-center justify-center gap-2 bg-linear-to-r from-emerald-500 to-teal-600 text-white font-bold py-3.5 px-6 rounded-2xl shadow-md hover:shadow-lg transition-all hover:scale-[1.02] active:scale-95 text-sm sm:text-base"
               >
                 <MapPin className="w-4 h-4" />
                 Chỉ Đường Google Maps
                 <ExternalLink className="w-4 h-4 opacity-70" />
               </a>
 
-              <button
+              {/* <button
                 type="button"
                 onClick={handleAddToCalendar}
-                className="flex-1 inline-flex items-center justify-center gap-2 bg-gradient-to-r from-purple-600 to-indigo-600 text-white font-bold py-3.5 px-6 rounded-2xl shadow-md hover:shadow-lg transition-all hover:scale-[1.02] active:scale-95 text-sm sm:text-base cursor-pointer"
+                className="flex-1 inline-flex items-center justify-center gap-2 bg-linear-to-r from-purple-600 to-indigo-600 text-white font-bold py-3.5 px-6 rounded-2xl shadow-md hover:shadow-lg transition-all hover:scale-[1.02] active:scale-95 text-sm sm:text-base cursor-pointer"
               >
                 <CalendarPlus className="w-4 h-4" />
                 Thêm Vào Lịch (iCal / Google)
-              </button>
+              </button> */}
             </div>
           </div>
 
-          <div className="h-[1px] w-full bg-gradient-to-r from-transparent via-pink-200 to-transparent" />
+          <div className="h-[1px] w-full bg-linear-to-r from-transparent via-pink-200 to-transparent" />
 
           {/* ========================================================= */}
           {/* PHẦN 4: BỘ SƯU TẬP ẢNH POLAROID KỶ NIỆM                  */}
           {/* ========================================================= */}
           <PolaroidGallery photos={POLAROID_PHOTOS} />
 
-          <div className="h-[1px] w-full bg-gradient-to-r from-transparent via-pink-200 to-transparent" />
+          <div className="h-[1px] w-full bg-linear-to-r from-transparent via-pink-200 to-transparent" />
 
           {/* ========================================================= */}
           {/* PHẦN 5: CÁC NÚT TƯƠNG TÁC PHỤ (PHÁO HOA & COPY LINK)      */}
           {/* ========================================================= */}
-          <div className="bg-gradient-to-r from-pink-50 via-amber-50 to-purple-50 rounded-3xl p-6 sm:p-8 border border-pink-100 text-center space-y-4">
+          <div className="bg-linear-to-r from-pink-50 via-amber-50 to-purple-50 rounded-3xl p-6 sm:p-8 border border-pink-100 text-center space-y-4">
             <h4 className="text-lg sm:text-xl font-black text-navy">
               Góp Thêm Niềm Vui Cùng Quỳnh Nhiên 🎉
             </h4>
@@ -338,7 +333,7 @@ export default function InvitationCard({
               </motion.button>
 
               {/* Nút Copy Link Thiệp */}
-              <motion.button
+              {/* <motion.button
                 whileHover={{ scale: 1.05 }}
                 whileTap={{ scale: 0.95 }}
                 onClick={handleCopyLink}
@@ -355,23 +350,15 @@ export default function InvitationCard({
                     <span>Copy Link Thiệp</span>
                   </>
                 )}
-              </motion.button>
+              </motion.button> */}
             </div>
           </div>
 
-          {/* Gợi ý cuộn tiếp xem thêm hành trình & game */}
-          {onExploreMore && (
-            <div className="text-center pt-4">
-              <button
-                type="button"
-                onClick={onExploreMore}
-                className="inline-flex items-center gap-2 text-pink-600 hover:text-pink-700 font-bold text-sm bg-pink-50 hover:bg-pink-100 px-5 py-2.5 rounded-full transition-all cursor-pointer shadow-xs"
-              >
-                <span>Khám phá Hành trình & Mini-Game bên dưới</span>
-                <ChevronDown className="w-4 h-4 animate-bounce" />
-              </button>
-            </div>
-          )}
+          <div className="h-[1px] w-full bg-linear-to-r from-transparent via-pink-200 to-transparent" />
+
+          {/* Xác nhận tham dự (Nút trốn lầy lội + Momo) & Lưu bút */}
+          <RSVPSection />
+
         </div>
       </motion.div>
     </div>
