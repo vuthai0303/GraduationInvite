@@ -1,14 +1,16 @@
 'use client';
 
-import { useMemo } from 'react';
+import { useSyncExternalStore, useMemo } from 'react';
 import { motion } from 'framer-motion';
 
 /**
  * StarParticles - Hiệu ứng hạt sao/bụi phát sáng trôi nổi trên nền
  *
- * Tạo 25 hạt ngẫu nhiên với vị trí, kích thước, màu sắc và tốc độ khác nhau.
- * Mỗi hạt bay lên/xuống liên tục tạo hiệu ứng "bầu trời đêm" lung linh.
- * Component này được đặt absolute, không chặn sự kiện chuột (pointer-events-none).
+ * Tạo 25 hạt ngẫu nhiên hoàn toàn mới (Math.random) mỗi lần tải trang.
+ * Áp dụng useSyncExternalStore chuẩn React 19 để giải quyết Client-Only Mount:
+ * 1. Trên Server (SSR): getServerSnapshot trả về false => danh sách hạt rỗng.
+ * 2. Trên Client Hydration: đồng bộ với server snapshot => không lỗi Hydration Mismatch.
+ * 3. Ngay sau khi mount: getSnapshot trả về true => tạo 25 hạt ngẫu nhiên và render mượt mà.
  */
 
 /* Bảng màu cho các hạt: vàng gold, hồng pastel, tím nhạt */
@@ -37,8 +39,7 @@ interface Particle {
 }
 
 /**
- * Tạo danh sách hạt ngẫu nhiên một lần duy nhất.
- * Dùng useMemo để tránh tạo lại mỗi lần render.
+ * Tạo danh sách 25 hạt sao ngẫu nhiên.
  */
 function generateParticles(count: number): Particle[] {
   return Array.from({ length: count }, (_, i) => ({
@@ -55,9 +56,21 @@ function generateParticles(count: number): Particle[] {
   }));
 }
 
+const emptySubscribe = () => () => {};
+
 export default function StarParticles() {
-  /* Tạo 25 hạt, chỉ tính 1 lần khi mount */
-  const particles = useMemo(() => generateParticles(25), []);
+  // Xác định trạng thái đã mount trên client bằng API chuẩn React 19
+  const isMounted = useSyncExternalStore(
+    emptySubscribe,
+    () => true,
+    () => false
+  );
+
+  // Chỉ sinh các hạt ngẫu nhiên khi đã ở trên client
+  const particles = useMemo(() => {
+    if (!isMounted) return [];
+    return generateParticles(25);
+  }, [isMounted]);
 
   return (
     /* Container phủ toàn màn hình, không chặn click */
@@ -76,6 +89,8 @@ export default function StarParticles() {
             /* Hiệu ứng phát sáng (glow) xung quanh hạt */
             boxShadow: `0 0 ${p.size * 2}px ${p.color}, 0 0 ${p.size * 4}px ${p.color}40`,
           }}
+          /* Fade in mượt mà khi xuất hiện */
+          initial={{ opacity: 0 }}
           /* Animation bay lên/xuống liên tục */
           animate={{
             /* Di chuyển dọc: lên rồi xuống */
