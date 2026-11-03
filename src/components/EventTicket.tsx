@@ -22,6 +22,18 @@ import {
  * - Hiệu ứng shine khi hover
  */
 
+// Mảng kích thước cố định cho thanh barcode giả lập (tránh gọi Math.random khi render)
+const BARCODE_STRIPES = [
+  { width: 2, height: 32 }, { width: 1, height: 42 }, { width: 2, height: 24 }, { width: 1, height: 38 },
+  { width: 1, height: 46 }, { width: 2, height: 28 }, { width: 1, height: 35 }, { width: 2, height: 44 },
+  { width: 1, height: 22 }, { width: 2, height: 40 }, { width: 1, height: 30 }, { width: 1, height: 45 },
+  { width: 2, height: 26 }, { width: 1, height: 36 }, { width: 2, height: 48 }, { width: 1, height: 25 },
+  { width: 2, height: 34 }, { width: 1, height: 41 }, { width: 1, height: 28 }, { width: 2, height: 39 },
+  { width: 1, height: 47 }, { width: 2, height: 31 }, { width: 1, height: 23 }, { width: 2, height: 43 },
+  { width: 1, height: 37 }, { width: 1, height: 29 }, { width: 2, height: 46 }, { width: 1, height: 33 },
+  { width: 2, height: 27 }, { width: 1, height: 40 },
+];
+
 export default function EventTicket() {
   const sectionRef = useRef<HTMLDivElement>(null);
   const isInView = useInView(sectionRef, { once: true, margin: "-100px" });
@@ -213,13 +225,13 @@ export default function EventTicket() {
                 {/* Barcode giả lập - tạo bằng các thanh đen có chiều rộng ngẫu nhiên */}
                 <div className="mt-4">
                   <div className="flex gap-[1px] items-end h-12 justify-center">
-                    {Array.from({ length: 30 }).map((_, i) => (
+                    {BARCODE_STRIPES.map((stripe, i) => (
                       <div
                         key={i}
                         className="bg-navy"
                         style={{
-                          width: `${Math.random() > 0.5 ? 2 : 1}px`, // Chiều rộng ngẫu nhiên 1-2px
-                          height: `${20 + Math.random() * 28}px`, // Chiều cao ngẫu nhiên
+                          width: `${stripe.width}px`,
+                          height: `${stripe.height}px`,
                         }}
                       />
                     ))}

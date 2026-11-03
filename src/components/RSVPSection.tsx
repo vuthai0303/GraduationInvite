@@ -1,19 +1,18 @@
 "use client";
 
-import { useState, useRef, useCallback, useEffect } from "react";
-import { motion, AnimatePresence, useInView } from "framer-motion";
 import confetti from "canvas-confetti";
+import { AnimatePresence, motion, useInView } from "framer-motion";
 import {
-  Heart,
-  Send,
-  PartyPopper,
   Ban,
-  MessageCircle,
-  Smartphone,
-  X,
-  Gift,
   Check,
+  Gift,
+  Heart,
+  MessageCircle,
+  Send,
+  Smartphone,
+  X
 } from "lucide-react";
+import { useCallback, useEffect, useRef, useState } from "react";
 
 /**
  * RSVP Section - Xác nhận tham dự & Lưu bút
@@ -29,6 +28,7 @@ import {
 
 export default function RSVPSection() {
   const sectionRef = useRef<HTMLDivElement>(null);
+  const momoPopupRef = useRef<HTMLDivElement>(null);
   const isInView = useInView(sectionRef, { once: true, margin: "-100px" });
 
   /* State quản lý form */
@@ -90,6 +90,47 @@ export default function RSVPSection() {
   }, []);
 
   /**
+   * Đóng popup Momo và cuộn mượt về lại RSVPSection
+   */
+  const handleCloseMomoPopup = useCallback(() => {
+    setShowMomoPopup(false);
+    setTimeout(() => {
+      sectionRef.current?.scrollIntoView({
+        behavior: "smooth",
+        block: "start",
+      });
+    }, 50);
+  }, []);
+
+  /**
+   * Tự động cuộn đến popup khi popup Momo mở ra
+   */
+  useEffect(() => {
+    if (showMomoPopup) {
+      const timer = setTimeout(() => {
+        momoPopupRef.current?.scrollIntoView({
+          behavior: "smooth",
+          block: "center",
+        });
+      }, 100);
+      return () => clearTimeout(timer);
+    }
+  }, [showMomoPopup]);
+
+  /**
+   * Đóng popup khi nhấn phím Escape
+   */
+  useEffect(() => {
+    const handleKeyDown = (e: KeyboardEvent) => {
+      if (e.key === "Escape" && showMomoPopup) {
+        handleCloseMomoPopup();
+      }
+    };
+    window.addEventListener("keydown", handleKeyDown);
+    return () => window.removeEventListener("keydown", handleKeyDown);
+  }, [showMomoPopup, handleCloseMomoPopup]);
+
+  /**
    * Xử lý khi bấm nút đồng ý tham dự
    * Bắn pháo giấy ăn mừng
    */
@@ -142,7 +183,7 @@ export default function RSVPSection() {
   return (
     <section
       ref={sectionRef}
-      className="py-16 md:py-24 px-4 bg-gradient-to-b from-white via-pink-pastel/30 to-pink-pastel relative overflow-hidden"
+      className="px-4 relative overflow-hidden pb-6 scroll-mt-6"
     >
       {/* Hình trang trí */}
       <div className="absolute top-10 right-10 text-6xl md:text-8xl opacity-5 pointer-events-none select-none">
@@ -160,9 +201,9 @@ export default function RSVPSection() {
           transition={{ duration: 0.6 }}
           className="text-center mb-10 md:mb-14"
         >
-          <span className="text-sm md:text-base font-bold text-pink-primary uppercase tracking-widest">
+          {/* <span className="text-sm md:text-base font-bold text-pink-primary uppercase tracking-widest">
             💌 R.S.V.P
-          </span>
+          </span> */}
           <h2 className="text-3xl md:text-4xl lg:text-5xl font-extrabold text-navy mt-2">
             Xác Nhận{" "}
             <span className="text-pink-primary">Tham Dự</span>
@@ -199,13 +240,9 @@ export default function RSVPSection() {
                     whileHover={{ scale: 1.08, rotate: [0, -2, 2, 0] }}
                     whileTap={{ scale: 0.95 }}
                     onClick={handleAttend}
-                    className="w-full sm:w-auto bg-gradient-to-r from-green-400 to-emerald-500 text-white font-bold px-6 md:px-8 py-4 rounded-2xl shadow-lg hover:shadow-xl transition-shadow cursor-pointer text-sm md:text-base"
+                    className="w-full sm:w-auto bg-linear-to-r from-green-400 to-emerald-500 text-white font-bold px-6 md:px-8 py-4 rounded-2xl shadow-lg hover:shadow-xl transition-shadow cursor-pointer text-sm md:text-base"
                   >
-                    <PartyPopper className="w-5 h-5 inline mr-2" />
-                    Chắc chắn có mặt, mang bụng đói đi ăn cỗ!
-                    <span className="block text-xs mt-1 opacity-80">
-                      (Free đồ ăn, ai mà bỏ!)
-                    </span>
+                    Chắc chắn có mặt! 💝
                   </motion.button>
 
                   {/* === NÚT TỪ CHỐI - CHẠY TRỐN KHI HOVER === */}
@@ -221,7 +258,7 @@ export default function RSVPSection() {
                     }}
                     onMouseEnter={handleDeclineHover} // Chạy trốn khi di chuột vào
                     onClick={handleDeclineClick} // Hiện popup Momo nếu bấm được
-                    className="w-full sm:w-auto bg-gradient-to-r from-gray-300 to-gray-400 text-gray-700 font-bold px-6 md:px-8 py-4 rounded-2xl shadow cursor-pointer text-sm md:text-base relative"
+                    className="w-full sm:w-auto bg-linear-to-r from-gray-300 to-gray-400 text-gray-700 font-bold px-6 md:px-8 py-4 rounded-2xl shadow cursor-pointer text-sm md:text-base relative"
                   >
                     <Ban className="w-5 h-5 inline mr-2" />
                     {/* Trên mobile: đổi text khi cố bấm nhiều lần */}
@@ -346,7 +383,7 @@ export default function RSVPSection() {
                   type="submit"
                   whileHover={{ scale: 1.03 }}
                   whileTap={{ scale: 0.97 }}
-                  className="w-full bg-gradient-to-r from-pink-primary to-purple text-white font-bold py-3.5 rounded-xl shadow-lg hover:shadow-xl transition-shadow cursor-pointer flex items-center justify-center gap-2"
+                  className="w-full bg-linear-to-r from-pink-primary to-purple text-white font-bold py-3.5 rounded-xl shadow-lg hover:shadow-xl transition-shadow cursor-pointer flex items-center justify-center gap-2"
                 >
                   <Send className="w-5 h-5" />
                   Gửi Lời Chúc
@@ -400,9 +437,10 @@ export default function RSVPSection() {
             animate={{ opacity: 1 }}
             exit={{ opacity: 0 }}
             className="fixed inset-0 bg-black/50 backdrop-blur-sm flex items-center justify-center z-50 p-4"
-            onClick={() => setShowMomoPopup(false)} // Bấm ngoài popup để đóng
+            onClick={handleCloseMomoPopup} // Bấm ngoài popup để đóng
           >
             <motion.div
+              ref={momoPopupRef}
               initial={{ scale: 0.5, y: 50 }}
               animate={{ scale: 1, y: 0 }}
               exit={{ scale: 0.5, y: 50 }}
@@ -411,7 +449,7 @@ export default function RSVPSection() {
             >
               {/* Nút đóng popup */}
               <button
-                onClick={() => setShowMomoPopup(false)}
+                onClick={handleCloseMomoPopup}
                 className="absolute top-3 right-3 text-navy/30 hover:text-navy/60 transition-colors cursor-pointer"
               >
                 <X className="w-5 h-5" />
@@ -444,7 +482,7 @@ export default function RSVPSection() {
                     </span>
                   </div>
                   <p className="text-2xl font-extrabold text-pink-primary tracking-wider">
-                    0123 456 789
+                    0918648475
                   </p>
                   <p className="text-xs text-navy/40 mt-1">
                     NGUYỄN NGỌC QUỲNH NHIÊN
@@ -460,7 +498,7 @@ export default function RSVPSection() {
                   whileHover={{ scale: 1.05 }}
                   whileTap={{ scale: 0.95 }}
                   onClick={() => {
-                    setShowMomoPopup(false);
+                    handleCloseMomoPopup();
                     handleAttend(); // Tự động xác nhận tham dự
                   }}
                   className="mt-4 w-full bg-gradient-to-r from-green-400 to-emerald-500 text-white font-bold py-3 rounded-xl shadow-lg cursor-pointer text-sm"

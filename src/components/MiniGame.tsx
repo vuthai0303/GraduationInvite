@@ -1,6 +1,6 @@
 "use client";
 
-import { useState, useRef, useCallback, useEffect } from "react";
+import { useState, useRef, useCallback } from "react";
 import { motion, AnimatePresence, useInView } from "framer-motion";
 import { Gamepad2, Trophy, RotateCcw, Zap } from "lucide-react";
 
@@ -69,7 +69,7 @@ export default function MiniGame() {
   const [isCorrectAnswer, setIsCorrectAnswer] = useState(false); // Câu trả lời đúng/sai
   const [gameComplete, setGameComplete] = useState(false); // Game đã hoàn thành
   const [currentQuote, setCurrentQuote] = useState(""); // Châm ngôn hiện tại
-  const [selectedAnswer, setSelectedAnswer] = useState<boolean | null>(null); // Câu trả lời đã chọn
+  const [finalQuote, setFinalQuote] = useState(() => funnyQuotes[0]); // Châm ngôn tổng kết
 
   /**
    * Xử lý khi người chơi bấm nút trả lời
@@ -80,7 +80,6 @@ export default function MiniGame() {
       const question = questions[currentQuestion];
       const correct = answer === question.isCorrect; // So sánh với đáp án
 
-      setSelectedAnswer(answer);
       setIsCorrectAnswer(correct);
       setShowResult(true);
 
@@ -100,11 +99,11 @@ export default function MiniGame() {
    */
   const nextQuestion = useCallback(() => {
     setShowResult(false);
-    setSelectedAnswer(null);
 
     if (currentQuestion < questions.length - 1) {
       setCurrentQuestion((prev) => prev + 1);
     } else {
+      setFinalQuote(funnyQuotes[Math.floor(Math.random() * funnyQuotes.length)]);
       setGameComplete(true); // Hết câu hỏi → hoàn thành game
     }
   }, [currentQuestion]);
@@ -119,7 +118,6 @@ export default function MiniGame() {
     setIsCorrectAnswer(false);
     setGameComplete(false);
     setCurrentQuote("");
-    setSelectedAnswer(null);
   }, []);
 
   return (
@@ -230,7 +228,7 @@ export default function MiniGame() {
                 {/* Hiển thị châm ngôn bonus */}
                 <div className="bg-gradient-to-r from-pink-pastel to-purple-50 rounded-xl p-4 mb-6">
                   <p className="text-sm md:text-base text-navy italic font-medium">
-                    {funnyQuotes[Math.floor(Math.random() * funnyQuotes.length)]}
+                    {finalQuote}
                   </p>
                 </div>
 
