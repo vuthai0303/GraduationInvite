@@ -38,59 +38,70 @@ Khi tiếp nhận bất kỳ yêu cầu nào trong dự án này, AI Agent phả
 [URL: ?code=VIPxx]
        │
        ▼
-┌───────────────────────────────────────────────┐
-│ Giai đoạn 1: Phong bì niêm phong (Sealed)    │
-│ - StarParticles lơ lửng nền                   │
-│ - Phong bì 3D đóng kín                        │
-│ - WaxSeal đỏ đập phập phồng (pulse)           │
-│ - Hover WaxSeal: wobble rung lắc + tooltip    │
-└───────────────────────┬───────────────────────┘
-                        │ Click WaxSeal
-                        ▼
-┌───────────────────────────────────────────────┐
-│ Giai đoạn 2: Kích hoạt mở thư (Opening)       │
-│ - Canvas Confetti nổ pháo giấy kim tuyến      │
-│ - WaxSeal xoay 720° thu nhỏ biến mất          │
-│ - Nắp phong bì gập ngược 3D rotateX(-180deg)  │
-│ - Lá thư trồi lên từ khe bao thư              │
-└───────────────────────┬───────────────────────┘
-                        │ Sau 1.4 giây
-                        ▼
-┌───────────────────────────────────────────────┐
-│ Giai đoạn 3: Tấm thiệp mở ra (Opened)         │
-│ - InvitationCard hiển thị trung tâm           │
-│ - Lời chào & Huy hiệu VIP theo `code`         │
-│ - GraduationAvatar đa lớp tương tác           │
-│ - Countdown thời gian thực tới 14/11/2026     │
-│ - Nút Google Maps & Thêm vào Lịch (.ics)      │
-│ - Thư viện ảnh Polaroid lật thẻ 3D (2 mặt)   │
-│ - Nút Pháo hoa vô tận & Nút Copy Link         │
-│ - Nút "Xem lại phong bì 3D" để reseal         │
-│ - Cuộn xuống xem Timeline, Ticket, Game, RSVP │
-└───────────────────────────────────────────────┘
+┌─────────────────────────────────────────────────────────────┐
+│ Giai đoạn 1: Phong bì niêm phong (Sealed)                  │
+│ - StarParticles lơ lửng nền (React 19 useSyncExternalStore) │
+│ - Ambient glow tím-hồng mờ ảo sau bao thư                   │
+│ - Phong bì 3D đóng kín                                      │
+│ - WaxSeal đỏ đập phập phồng (pulse) dập nổi nón cử nhân vàng│
+│ - Hover WaxSeal: wobble rung lắc + tooltip "Ấn để bóc phốt" │
+└──────────────────────────────┬──────────────────────────────┘
+                               │ Click WaxSeal
+                               ▼
+┌─────────────────────────────────────────────────────────────┐
+│ Giai đoạn 2: Kích hoạt mở thư (Opening)                     │
+│ - WaxSeal xoay 720° thu nhỏ biến mất sau 600ms              │
+│ - Canvas Confetti nổ pháo giấy 2 đợt (trung tâm & 2 cánh)   │
+│ - Nắp phong bì gập ngược 3D rotateX(-180deg)                │
+│ - Lá thư trồi lên từ khe bao thư                            │
+└──────────────────────────────┬──────────────────────────────┘
+                               │ Sau 2.0 giây
+                               ▼
+┌─────────────────────────────────────────────────────────────┐
+│ Giai đoạn 3: Tấm thiệp mở ra (Opened)                       │
+│ - Thanh điều hướng nổi: nút "Xem lại phong bì 3D" để reseal │
+│ - Khung thiệp chính InvitationCard trung tâm bao gồm:       │
+│   1. Lời chào & Huy hiệu VIP cá nhân hóa theo `code`        │
+│   2. GraduationAvatar: Cử nhân nữ tóc dài, hoa tươi & bằng, │
+│      mặt thật (/quynh-nhien.png), lắc gật gù, xoay 360°,    │
+│      wiggle khi click dồn dập, bong bóng thoại ngẫu nhiên   │
+│   3. 3 card Thông tin sự kiện: Thứ Bảy 14/11/2026, 15:30,   │
+│      Hội trường ĐH Mở TP.HCM (97 Võ Văn Tần, Q.3)           │
+│   4. Countdown thời gian thực 4 ô (Ngày, Giờ, Phút, Giây)   │
+│   5. Nút chỉ đường Google Maps                              │
+│   6. PolaroidGallery: Lưới 8 ảnh kỷ niệm 2 mặt xoay lật 3D  │
+│   7. Nút tương tác Bắn Pháo Hoa vô tận 🎊                   │
+│   8. RSVPSection tích hợp:                                  │
+│      - Nút "Chắc chắn có mặt" (bắn pháo giấy chúc mừng)     │
+│      - Nút "Từ chối" chạy trốn (Desktop) / đổi text (Mobile)│
+│      - Popup Momo mừng tốt nghiệp (0918648475)              │
+│      - Form gửi lời chúc và lưu bút tức thì                 │
+│ - Chân trang Footer: Lời cảm ơn và credit                   │
+└─────────────────────────────────────────────────────────────┘
 ```
 
 ---
 
 ### B. Cấu trúc Thư mục và Trách nhiệm Thành phần
 
-| Thư mục / File | Trách nhiệm & Nội dung |
+| Thư mục / File | Trách nhiệm & Nội dung Hiện tại |
 |---|---|
-| `src/constants/guests.ts` | Từ điển khách mời `GUEST_MAP` (`VIP01` -> `VIP08`, `DEFAULT`). Hàm `getGuestByCode()` tự chuẩn hoá chuỗi, bỏ prefix `code:` và fallback an toàn. |
-| `src/constants/eventDetails.ts` | Thông tin cử nhân, thời gian (`14/11/2026 15:30`), địa điểm, link Google Maps, danh sách câu thoại Avatar và 8 thẻ Polaroid kỷ niệm 2 mặt. |
-| `src/components/Envelope/Envelope.tsx` | Bao thư 3D quản lý state machine (`sealed` -> `opening` -> `opened`), xử lý hiệu ứng lật nắp `rotateX(-180deg)`, perspective `1200px`. |
-| `src/components/Envelope/WaxSeal.tsx` | Con dấu sáp đỏ dập nổi 3D, icon nón cử nhân vàng gold, hiệu ứng pulse/wobble, click nổ xoay 720° biến mất. |
-| `src/components/Envelope/StarParticles.tsx` | 25 hạt bụi sao pastel và vàng lơ lửng, phát sáng mờ ảo quanh màn hình (pure render với `useMemo`). |
-| `src/components/Invitation/InvitationCard.tsx` | Khung thiệp chính tích hợp Avatar, Header cá nhân hoá, Countdown, Polaroid, nút Lịch `.ics`, nút bắn pháo hoa, nút copy link thiệp. |
-| `src/components/Invitation/GraduationAvatar.tsx` | Nhân vật cử nhân tương tác: Gown + Mortarboard có tua rua lắc lư, mặt gật gù, kính râm Thug Life trượt xuống + sparkle ✨, bong bóng thoại ngẫu nhiên, xoay 360°/wiggle khi click. |
-| `src/components/Invitation/Countdown.tsx` | Đồng hồ đếm ngược 4 ô (Ngày, Giờ, Phút, Giây) chạy theo thời gian thực với animation đổi số mượt. |
-| `src/components/Invitation/PolaroidGallery.tsx` | Lưới thẻ ảnh polaroid góc nghiêng so le dán washi tape, click xoay lật 3D 180° xem lời bình mặt sau. |
-| `src/components/Timeline.tsx` | Timeline hành trình 4 năm sinh tồn Kế toán từ năm 1 đến năm 4. |
-| `src/components/EventTicket.tsx` | Vé máy bay Graduation Airlines kèm mã vạch giả lập và bản đồ nhúng Google Maps iframe. |
-| `src/components/MiniGame.tsx` | Mini-game kiểm tra kiến thức định khoản Nợ - Có đúng/sai + câu châm ngôn hài hước. |
-| `src/components/RSVPSection.tsx` | Form gửi lời chúc + Nút xác nhận lầy lội (nút từ chối chạy trốn khi hover trên desktop, đổi text trên mobile + popup Momo). |
-| `src/components/Footer.tsx` | Chân trang cảm ơn và đồng hồ đếm ngược. |
-| `src/app/page.tsx` | Entry point: Bọc component con trong `<Suspense fallback={...}>` để đọc `useSearchParams()`, điều phối chuyển cảnh giữa Envelope và InvitationCard. |
+| `src/constants/guests.ts` | Từ điển khách mời `GUEST_MAP` (`VIP01` -> `VIP08`, `DEFAULT`). Hàm `getGuestByCode()` chuẩn hoá chuỗi, tự cắt prefix `code:`, uppercase và fallback an toàn sang `DEFAULT`. |
+| `src/constants/eventDetails.ts` | Thông tin cử nhân (`GRADUATE_NAME`, `DEGREE`, `UNIVERSITY`, `GRADUATE_AVATAR_IMAGE` trỏ tới `/quynh-nhien.png`), thời gian (`14/11/2026 15:30`), địa điểm (`VENUE_NAME`, `VENUE_ADDRESS`, link Google Maps), 10 câu quote `AVATAR_QUOTES`, 8 ảnh `POLAROID_PHOTOS` 2 mặt. |
+| `src/components/Envelope/Envelope.tsx` | Bao thư 3D quản lý state machine (`sealed` -> `opening` -> `opened`), hiệu ứng lật nắp `rotateX(-180deg)` (perspective 1200px), pháo giấy 2 đợt, hiệu ứng lá thư trồi lên. |
+| `src/components/Envelope/WaxSeal.tsx` | Con dấu sáp đỏ dập nổi 3D, icon nón cử nhân vàng gold, hiệu ứng pulse khi idle, wobble rung lắc + tooltip khi hover, click nổ xoay 720° biến mất sau 600ms. |
+| `src/components/Envelope/StarParticles.tsx` | 25 hạt bụi sao pastel và vàng lơ lửng phát sáng; sử dụng `useSyncExternalStore` (chuẩn React 19) để đảm bảo pure SSR và triệt tiêu hoàn toàn lỗi Hydration Mismatch. |
+| `src/components/Invitation/InvitationCard.tsx` | Khung thiệp chính tích hợp Header VIP cá nhân hoá, `GraduationAvatar`, 3 block thông tin ngày/giờ/địa điểm, `Countdown`, nút Google Maps, `PolaroidGallery`, nút Bắn pháo hoa và nhúng trực tiếp `RSVPSection`. |
+| `src/components/Invitation/GraduationAvatar.tsx` | Cử nhân nữ tương tác SVG: Tóc dài bồng bềnh, áo cử nhân thắt dải lụa, tay trái ôm hoa tươi, tay phải giơ bằng cử nhân vẫy chào; hỗ trợ ảnh mặt thật (`GRADUATE_AVATAR_IMAGE`); animation đung đưa, lắc đầu gật gù, tua rua lắc; click xoay 360°, click dồn dập (>= 3 lần / 800ms) rung lắc (wiggle), hover/click đổi quote ngẫu nhiên *(đã bỏ kính Thug Life)*. |
+| `src/components/Invitation/Countdown.tsx` | Đồng hồ đếm ngược 4 ô (Ngày, Giờ, Phút, Giây) chạy theo thời gian thực với `AnimatePresence` trượt số mượt mà; hết giờ hiển thị thông báo chúc mừng. |
+| `src/components/Invitation/PolaroidGallery.tsx` | Lưới 8 ảnh polaroid 3 cột góc nghiêng so le dán băng dính washi tape pastel; click/tap lật 3D 180° để xem lời thú tội/bí mật mặt sau. |
+| `src/components/RSVPSection.tsx` | Được nhúng trong `InvitationCard`: Form xác nhận tham dự lầy lội (nút Đồng ý bắn pháo giấy vs nút Từ chối chạy trốn trên desktop hoặc đổi text trên mobile, popup Momo mừng tốt nghiệp STK 0918648475) & Form gửi lời chúc kèm lưu bút tức thì. |
+| `src/components/Footer.tsx` | Chân trang cảm ơn khách mời và credit "Made with ❤️ for Quỳnh Nhiên's Graduation 2026" (đồng hồ countdown đã được chuyển lên `InvitationCard`). |
+| `src/app/page.tsx` | Entry point: Bọc component con trong `<Suspense fallback={...}>` để đọc `useSearchParams()`, điều phối chuyển cảnh `AnimatePresence` giữa `Envelope` và `InvitationCard`, có nút nổi "Xem lại phong bì 3D" để reseal. |
+| `src/components/Timeline.tsx` *(Dự phòng)* | Component mở rộng: Timeline hành trình 4 năm sinh tồn Kế toán (hiện đang được lưu trữ dưới dạng module dự phòng độc lập). |
+| `src/components/EventTicket.tsx` *(Dự phòng)* | Component mở rộng: Vé máy bay Graduation Airlines kèm barcode giả lập và Google Maps iframe (hiện đang được lưu trữ dưới dạng module dự phòng độc lập). |
+| `src/components/MiniGame.tsx` *(Dự phòng)* | Component mở rộng: Mini-game kiểm tra kiến thức định khoản Nợ - Có đúng/sai + câu châm ngôn hài hước (hiện đang được lưu trữ dưới dạng module dự phòng độc lập). |
+| `src/components/Hero.tsx` *(Dự phòng)* | Component mở rộng: Hero section mở đầu với pháo giấy và tiêu đề Breaking News (module ban đầu, hiện đã được thay thế bằng trải nghiệm Phong bì 3D). |
 
 ---
 
@@ -103,16 +114,15 @@ Khi Agent thực hiện bất kỳ task nào (sửa lỗi, thêm tính năng, th
 - Không tự ý xoá các animation hay logic tương tác hiện có trừ khi có yêu cầu cụ thể từ User.
 
 ### Bước 2: Viết mã theo Quy chuẩn Kỹ thuật
-- **React 19 Pure Render**: Tuyệt đối **KHÔNG** gọi `Math.random()` hoặc hàm bất định trực tiếp trong thân hàm component hoặc khi sinh JSX. Nếu cần số ngẫu nhiên:
-  - Khởi tạo trong `useMemo(() => ..., [])`.
-  - Hoặc khởi tạo trong `useState(() => ...)`.
-  - Hoặc dùng danh sách tĩnh (static array).
-  - Hoặc gọi trong callback (event handler) / `useEffect`.
+- **React 19 Pure Render & Hydration Safety**: Tuyệt đối **KHÔNG** gọi `Math.random()` hoặc hàm bất định trực tiếp trong thân hàm component hoặc khi sinh JSX trong giai đoạn SSR:
+  - Với hiệu ứng cần số ngẫu nhiên chỉ trên Client (như particles nền): Sử dụng hook `useSyncExternalStore` để SSR render danh sách rỗng, chỉ render trên Client sau khi hydrate thành công (xem mẫu tại `StarParticles.tsx`).
+  - Hoặc khởi tạo mảng cố định (static array, như `BARCODE_STRIPES` trong `EventTicket.tsx`).
+  - Hoặc gọi trong event handlers / callback (`handleClick`, `handleDeclineHover`).
 - **Framer Motion v14 Typed Variants**: Khi khai báo biến thể animation, **LUÔN** import `type { Variants } from "framer-motion"` và gán kiểu `const myVariants: Variants = { ... }`. Điều này triệt tiêu hoàn toàn lỗi TS2322 do TypeScript suy luận lỏng lẻo (`string` thay vì `Easing` / `AnimationGeneratorType`).
 - **Next.js 16 Suspense Boundary**: Mọi component đọc `useSearchParams()` hoặc các hook client điều hướng **BẮT BUỘC** phải được bao bọc bởi `<Suspense fallback={<FallbackComponent />}>` ở tầng Page để không gây lỗi Static Generation trong `next build`.
 - **Tailwind CSS v4 Standard**:
   - Khai báo token màu trong `@theme inline` tại `src/app/globals.css`.
-  - Sử dụng các utility: `bg-gradient-to-...`, `backdrop-blur-...`, `shadow-...`, `rounded-...`.
+  - Sử dụng các utility: `bg-linear-to-...` (chuẩn Tailwind v4), `backdrop-blur-...`, `shadow-...`, `rounded-...`.
 
 ### Bước 3: Kiểm định Chất lượng Code (Quality Gate)
 Trước khi bàn giao kết quả cho User, Agent phải chạy 2 lệnh kiểm tra:
@@ -141,7 +151,15 @@ VIP09: {
 ```
 Người dùng chỉ cần truy cập: `https://ten-mien.com/?code=VIP09` để xem thiệp riêng.
 
-### B. Thêm ảnh Polaroid mới
+### B. Cập nhật ảnh đại diện cử nhân (mặt thật)
+1. Thêm ảnh chân dung vào thư mục `public/` (ví dụ: `public/quynh-nhien.png`).
+2. Mở `src/constants/eventDetails.ts`, cập nhật:
+```typescript
+export const GRADUATE_AVATAR_IMAGE = "/quynh-nhien.png";
+```
+Avatar sẽ tự động render ảnh chân dung thật lồng vào khuôn mặt nhân vật hoạt hình tương tác.
+
+### C. Thêm ảnh Polaroid mới
 Mở `src/constants/eventDetails.ts`, thêm vào mảng `POLAROID_PHOTOS`:
 ```typescript
 {
@@ -151,5 +169,18 @@ Mở `src/constants/eventDetails.ts`, thêm vào mảng `POLAROID_PHOTOS`:
 },
 ```
 
-### C. Thêm câu thoại Avatar mới
+### D. Thêm câu thoại Avatar mới
 Mở `src/constants/eventDetails.ts`, thêm câu thoại mới vào mảng `AVATAR_QUOTES`.
+
+### E. Kích hoạt lại các Section mở rộng
+Nếu cần hiển thị lại Timeline, Boarding Pass vé máy bay hoặc Mini-game, chỉ cần mở [page.tsx](file:///d:/Project/GraduationInvite/src/app/page.tsx) và bỏ comment các component tương ứng:
+```tsx
+{/* Hành trình "Sống sót" Kế toán 4 năm */}
+<Timeline />
+
+{/* Vé máy bay đến lễ tốt nghiệp (Boarding Pass & Google Maps) */}
+<EventTicket />
+
+{/* Mini-game Bắt lỗi sai Nợ - Có */}
+<MiniGame />
+```
