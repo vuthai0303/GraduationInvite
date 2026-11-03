@@ -143,7 +143,7 @@ export const POLAROID_PHOTOS: PolaroidPhoto[] = [
     src: "/photos/photo2.jpg",
     caption: "Nhóm đồ án 'Dream Team' 💪",
     backCaption:
-      "Dream Team gì đâu, thức trắng 3 đêm liền, ai cũng muốn disband! 😵‍💫",
+      "Dream Team gì đâu, thức trắng 3 đêm liền, ai cũng muốn disband! 🫩",
   },
 
   // Ảnh 3: Giờ học buồn ngủ
@@ -154,12 +154,12 @@ export const POLAROID_PHOTOS: PolaroidPhoto[] = [
       "Cả lớp có 50 người thì 49 người ngủ, 1 người còn lại là giảng viên 😴",
   },
 
-  // Ảnh 4: Canteen - chiến trường ẩm thực
+  // Ảnh 4: Nhậu thời sinh viên
   {
     src: "/photos/photo4.jpg",
-    caption: "Canteen chiến trường mỗi trưa 🍜",
+    caption: "Chiến trường trên bàn nhậu 🍾",
     backCaption:
-      "Đại học không dạy tao kế toán giỏi, nhưng dạy tao xếp hàng mua cơm pro lắm! 🏃‍♀️",
+      "Đại học không dạy tao kế toán giỏi, nhưng dạy tao cách sống sót trên bàn nhậu! 🍺",
   },
 
   // Ảnh 5: Mùa thi căng thẳng
@@ -167,7 +167,7 @@ export const POLAROID_PHOTOS: PolaroidPhoto[] = [
     src: "/photos/photo5.jpg",
     caption: "Mùa thi - Survival Mode ON 📝",
     backCaption:
-      "Một học kỳ không học, một tuần cố gắng ôn, một đêm cầu nguyện, một bài thi viết bừa 🙏",
+      "Một học kỳ không học, một tuần cố gắng ôn, một đêm thức trắng cầu nguyện, một bài thi viết bừa 🙏",
   },
 
   // Ảnh 6: Khoảnh khắc tốt nghiệp

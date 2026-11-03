@@ -105,13 +105,13 @@ export default function InvitationCard({
   */
 
   return (
-    <div className="w-full max-w-4xl mx-auto px-4 py-8 md:py-16">
+    <div className="w-full max-w-4xl mx-auto px-4 py-8 md:py-16 overflow-scroll">
       {/* TẤM THIỆP CHÍNH */}
       <motion.div
         initial={{ opacity: 0, y: 50, scale: 0.95 }}
         animate={{ opacity: 1, y: 0, scale: 1 }}
         transition={{ duration: 0.8, ease: [0.16, 1, 0.3, 1] }}
-        className="bg-white/95 backdrop-blur-xl rounded-3xl md:rounded-[40px] shadow-2xl border border-pink-100 overflow-hidden relative"
+        className="min-w-[360px] bg-white/95 backdrop-blur-xl rounded-3xl md:rounded-[40px] shadow-2xl border border-pink-100 overflow-hidden relative"
       >
         {/* Dải ruy băng mạ vàng & hồng ở góc trên */}
         <div className="h-3 w-full bg-linear-to-r from-amber-400 via-pink-500 to-purple-600" />

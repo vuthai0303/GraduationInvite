@@ -293,7 +293,7 @@ export default function GraduationAvatar({
             {/* Góc nhìn trực diện chuẩn anime: Chóp hình thoi + Vòm mũ  */}
             {/* ôm trán + Quả tua hạt tròn & chùm sợi tơ vàng đung đưa    */}
             {/* ======================================================== */}
-            <div className="relative z-30 w-[80px] sm:w-[96px] pointer-events-none drop-shadow-md">
+            <div className="relative z-30 w-[80px] sm:w-[96px] pointer-events-none drop-shadow-md translate-y-2">
               <svg
                 viewBox="0 0 220 170"
                 fill="none"
@@ -525,19 +525,6 @@ export default function GraduationAvatar({
             </div>
 
           {/* ======================================================== */}
-          {/* LỚP 2: TÓC DÀI SAU LƯNG (BACK HAIR LAYER)                 */}
-          {/* ======================================================== */}
-          <div
-            className="absolute top-7 left-1/2 -translate-x-1/2 z-0 h-[112px] w-[82px] sm:top-9 sm:h-[138px] sm:w-[102px] rounded-t-full rounded-b-[32px] shadow-sm"
-            style={{
-              background: "linear-gradient(180deg, #181513 0%, #29231f 65%, #181513 100%)",
-            }}
-          >
-            {/* Vệt sáng óng ả trên tóc */}
-            <div className="mx-auto mt-4 h-14 w-8 rounded-full bg-stone-700/20 blur-xs" />
-          </div>
-
-          {/* ======================================================== */}
           {/* LỚP 3: KHUÔN MẶT BẦU DỤC (HỖ TRỢ MẶT NGƯỜI THẬT)         */}
           {/* ======================================================== */}
           <motion.div
@@ -622,26 +609,6 @@ export default function GraduationAvatar({
           </motion.div>
 
           {/* ======================================================== */}
-          {/* LỚP 4: HAI LỌN TÓC DÀI PHÍA TRƯỚC VAI (FRONT STRANDS)     */}
-          {/* ======================================================== */}
-          {/* Lọn tóc trái buông trước ngực */}
-          <div
-            className="absolute top-14 -left-0.5 sm:top-18 sm:-left-1 z-25 h-16 w-3.5 sm:h-20 sm:w-4.5 rounded-full shadow-xs pointer-events-none"
-            style={{
-              background: "linear-gradient(180deg, #241e1a 0%, #181513 100%)",
-              transform: "rotate(6deg)",
-            }}
-          />
-          {/* Lọn tóc phải buông trước ngực */}
-          <div
-            className="absolute top-14 -right-0.5 sm:top-18 sm:-right-1 z-25 h-16 w-3.5 sm:h-20 sm:w-4.5 rounded-full shadow-xs pointer-events-none"
-            style={{
-              background: "linear-gradient(180deg, #241e1a 0%, #181513 100%)",
-              transform: "rotate(-6deg)",
-            }}
-          />
-
-          {/* ======================================================== */}
           {/* LỚP 5: VÁY TỐT NGHIỆP CỬ NHÂN NỮ (GRADUATION GOWN)       */}
           {/* ======================================================== */}
           <div className="relative -mt-3.5 z-10 flex flex-col items-center">
@@ -662,8 +629,8 @@ export default function GraduationAvatar({
 
               {/* Dải lụa cử nhân (Stole) màu đỏ mận viền vàng kim vắt qua 2 vai */}
               <div className="absolute top-0 inset-x-0 flex justify-between px-3">
-                <div className="h-24 w-3.5 bg-gradient-to-b from-rose-600 to-rose-700 border-x border-amber-300 shadow-xs" />
-                <div className="h-24 w-3.5 bg-gradient-to-b from-rose-600 to-rose-700 border-x border-amber-300 shadow-xs" />
+                <div className="h-24 w-3.5 bg-linear-to-b from-rose-600 to-rose-700 border-x border-amber-300 shadow-xs" />
+                <div className="h-24 w-3.5 bg-linear-to-b from-rose-600 to-rose-700 border-x border-amber-300 shadow-xs" />
               </div>
 
               {/* Đường ly váy ở giữa */}
@@ -677,7 +644,7 @@ export default function GraduationAvatar({
           <motion.div
             variants={diplomaArmVariants}
             animate="animate"
-            className="absolute top-8 -right-8 sm:top-20 sm:-right-10 z-20"
+            className="absolute top-12 -right-7 sm:top-20 sm:-right-7 z-20"
             style={{ originX: 0.15, originY: 0.85 }}
           >
             <div className="relative flex flex-col items-center">
@@ -688,7 +655,7 @@ export default function GraduationAvatar({
                 viewBox="0 0 40 56"
                 fill="none"
                 xmlns="http://www.w3.org/2000/svg"
-                className="drop-shadow-md -rotate-45 translate-1"
+                className="drop-shadow-md -rotate-55 translate-1 z-50"
               >
                 {/* Cuộn giấy bằng tốt nghiệp màu kem */}
                 <rect
