@@ -69,6 +69,13 @@ export const GOOGLE_MAPS_URL =
 export const GOOGLE_MAPS_EMBED =
   "https://www.google.com/maps/embed?pb=!1m18!1m12!1m3!1d3919.502745702037!2d106.69042!3d10.775847!2m3!1f0!2f0!3f0!3m2!1i1024!2i768!4f13.1!3m3!1m2!1s0x31752f2670a0de25%3A0x955748cb1e4cc228!2zxJDhuqFpIGjhu41jIE3hu58gVFAuSENNIC0gQ8ahIHPhu58gY2jDrW5o!5e0!3m2!1svi!2s!4v1635000000000!5m2!1svi!2s";
 
+/**
+ * URL Google Apps Script Web App để lưu thông tin RSVP và Lời chúc vào Google Sheet.
+ */
+export const GOOGLE_SHEET_SCRIPT_URL =
+  "https://script.google.com/macros/s/AKfycbya5Tm1u2dshl92f1-AcnLFHXQFkEhZJVIgtl9Bm1cpYxCuck2ZHDT52AItyzEKXf6zOQ/exec";
+
+
 // =============================================
 // ===== CÂU QUOTE HÀI HƯỚC CỦA AVATAR =====
 // =============================================

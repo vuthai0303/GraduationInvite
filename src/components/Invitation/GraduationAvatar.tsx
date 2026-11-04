@@ -262,7 +262,7 @@ export default function GraduationAvatar({
             initial="hidden"
             animate="visible"
             exit="exit"
-            className="absolute -top-6 left-1/2 z-40 mb-3 w-52 -translate-x-1/2 -translate-y-full sm:w-60 pointer-events-none"
+            className="absolute -top-2 left-1/2 z-40 mb-3 w-52 -translate-x-1/2 -translate-y-full sm:w-60 pointer-events-none"
           >
             <div className="relative rounded-2xl border-2 border-pink-200 bg-white/95 px-4 py-3 shadow-xl backdrop-blur-xs">
               <p className="text-center text-xs font-bold text-navy sm:text-sm leading-relaxed">

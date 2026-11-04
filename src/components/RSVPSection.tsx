@@ -1,5 +1,7 @@
 "use client";
 
+import { GOOGLE_SHEET_SCRIPT_URL } from "@/constants/eventDetails";
+import { isExistInviteCode } from "@/constants/guests";
 import confetti from "canvas-confetti";
 import { AnimatePresence, motion, useInView } from "framer-motion";
 import {
@@ -7,36 +9,100 @@ import {
   Check,
   Gift,
   Heart,
+  Loader2,
   MessageCircle,
   Send,
   Smartphone,
-  X
+  Sparkles,
+  X,
 } from "lucide-react";
 import { useCallback, useEffect, useRef, useState } from "react";
+
+export interface RSVPSectionProps {
+  guestName?: string;
+  guestCode?: string;
+}
+
+interface SendRSVPOptions {
+  code: string;
+  name: string;
+  attending: boolean | null;
+  message?: string;
+}
+
+/**
+ * Gửi thông tin RSVP lên Google Sheet thông qua API Route /api/rsvp
+ * hoặc fallback trực tiếp sang Google Apps Script nếu cần.
+ */
+async function recordRSVP(options: SendRSVPOptions): Promise<boolean> {
+  const payload = {
+    code: options.code || "Vãng lai",
+    name: options.name || "Ẩn danh",
+    attending: options.attending,
+    message: options.message || "",
+  };
+
+  // 1. Ưu tiên gọi API Route nội bộ Next.js
+  try {
+    const res = await fetch("/api/rsvp", {
+      method: "POST",
+      headers: { "Content-Type": "application/json" },
+      body: JSON.stringify(payload),
+    });
+    if (res.ok) {
+      return true;
+    }
+  } catch (err) {
+    console.warn("API route /api/rsvp không phản hồi, chuyển sang fallback:", err);
+  }
+
+  // 2. Dự phòng trực tiếp tới Google Apps Script (no-cors để tránh chặn CORS trên browser)
+  try {
+    await fetch(GOOGLE_SHEET_SCRIPT_URL, {
+      method: "POST",
+      mode: "no-cors",
+      headers: {
+        "Content-Type": "text/plain;charset=utf-8",
+      },
+      body: JSON.stringify(payload),
+    });
+    return true;
+  } catch (err) {
+    console.error("Gửi trực tiếp đến Google Apps Script thất bại:", err);
+    return false;
+  }
+}
 
 /**
  * RSVP Section - Xác nhận tham dự & Lưu bút
  *
  * Bao gồm:
- * - Form gửi lời chúc (tên + lời nhắn)
- * - Hai nút xác nhận siêu lầy lội:
- *   + Nút Đồng ý: "Chắc chắn có mặt, mang bụng đói đi ăn cỗ!"
- *   + Nút Từ chối: chạy trốn khi hover (trên desktop) / đổi text (trên mobile)
+ * - Hai nút xác nhận siêu lầy lội (Đồng ý & Từ chối chạy trốn)
+ * - Tự động đồng bộ và lưu kết quả vào Google Sheet của Quỳnh Nhiên
+ * - Form gửi lời chúc kèm lưu bút tức thì
  * - Popup Momo khi bấm nút từ chối
- * - Pháo giấy khi bấm xác nhận tham dự
+ * - Pháo giấy chúc mừng
  */
-
-export default function RSVPSection() {
+export default function RSVPSection({
+  guestName = "",
+  guestCode = "DEFAULT",
+}: RSVPSectionProps) {
   const sectionRef = useRef<HTMLDivElement>(null);
   const momoPopupRef = useRef<HTMLDivElement>(null);
   const isInView = useInView(sectionRef, { once: true, margin: "-100px" });
 
   /* State quản lý form */
-  const [name, setName] = useState(""); // Tên người gửi
+  const defaultDisplayName =
+    isExistInviteCode(guestCode) && guestName ? guestName : "";
+  const [name, setName] = useState(defaultDisplayName); // Tên người gửi
   const [message, setMessage] = useState(""); // Lời chúc
   const [isSubmitted, setIsSubmitted] = useState(false); // Đã gửi form chưa
   const [showMomoPopup, setShowMomoPopup] = useState(false); // Hiển thị popup Momo
   const [isAttending, setIsAttending] = useState<boolean | null>(null); // Trạng thái tham dự
+
+  /* Loading states khi gửi dữ liệu lên Google Sheet */
+  const [isSubmittingAttend, setIsSubmittingAttend] = useState(false);
+  const [isSubmittingMessage, setIsSubmittingMessage] = useState(false);
 
   /* State cho nút "chạy trốn" */
   const [declinePosition, setDeclinePosition] = useState({ x: 0, y: 0 }); // Vị trí nút từ chối
@@ -131,17 +197,19 @@ export default function RSVPSection() {
   }, [showMomoPopup, handleCloseMomoPopup]);
 
   /**
-   * Xử lý khi bấm nút đồng ý tham dự
-   * Bắn pháo giấy ăn mừng
+   * Xử lý khi bấm nút đồng ý tham dự:
+   * 1. Bắn pháo giấy ăn mừng
+   * 2. Lưu vào Google Sheet ngay lập tức
    */
-  const handleAttend = useCallback(() => {
-    setIsAttending(true);
+  const handleAttend = useCallback(async () => {
+    setIsSubmittingAttend(true);
+    const guestDisplayName =
+      name.trim() || (guestCode !== "DEFAULT" ? guestName : "Khách mời");
 
     // Bắn pháo giấy ăn mừng khi xác nhận tham dự
     const duration = 2000;
     const end = Date.now() + duration;
 
-    /* Bắn pháo giấy liên tục trong 2 giây */
     const frame = () => {
       confetti({
         particleCount: 3,
@@ -163,21 +231,66 @@ export default function RSVPSection() {
       }
     };
     frame();
-  }, []);
+
+    // Gửi thông tin lên Google Sheet
+    await recordRSVP({
+      code: guestCode,
+      name: guestDisplayName,
+      attending: true,
+      message: message.trim() || "",
+    });
+
+    setIsSubmittingAttend(false);
+    setIsAttending(true);
+  }, [guestCode, guestName, message, name]);
 
   /**
-   * Xử lý gửi form lời chúc
+   * Xác nhận không đến được từ popup Momo
+   */
+  const handleDeclineConfirm = useCallback(async () => {
+    handleCloseMomoPopup();
+    setIsAttending(false);
+    const guestDisplayName =
+      name.trim() || (guestCode !== "DEFAULT" ? guestName : "Khách mời");
+
+    await recordRSVP({
+      code: guestCode,
+      name: guestDisplayName,
+      attending: false,
+      message: "Bận không đến được, gửi quà qua Momo",
+    });
+  }, [guestCode, guestName, handleCloseMomoPopup, name]);
+
+  /**
+   * Xử lý gửi form lời chúc:
+   * Lưu lời chúc và thông tin vào Google Sheet
    */
   const handleSubmitMessage = useCallback(
-    (e: React.FormEvent) => {
+    async (e: React.FormEvent) => {
       e.preventDefault();
-      if (name.trim() && message.trim()) {
-        setIsSubmitted(true);
-        // Ở đây có thể tích hợp API gửi dữ liệu lên server
-        // Ví dụ: fetch('/api/wishes', { method: 'POST', body: JSON.stringify({ name, message }) })
-      }
+      if (!name.trim() || !message.trim()) return;
+
+      setIsSubmittingMessage(true);
+
+      await recordRSVP({
+        code: guestCode,
+        name: name.trim(),
+        attending: isAttending,
+        message: message.trim(),
+      });
+
+      // Pháo hoa nhẹ chúc mừng gửi lời chúc thành công
+      confetti({
+        particleCount: 35,
+        spread: 60,
+        origin: { y: 0.75 },
+        colors: ["#ec4899", "#a855f7", "#f59e0b"],
+      });
+
+      setIsSubmittingMessage(false);
+      setIsSubmitted(true);
     },
-    [name, message]
+    [guestCode, isAttending, message, name]
   );
 
   return (
@@ -201,9 +314,6 @@ export default function RSVPSection() {
           transition={{ duration: 0.6 }}
           className="text-center mb-10 md:mb-14"
         >
-          {/* <span className="text-sm md:text-base font-bold text-pink-primary uppercase tracking-widest">
-            💌 R.S.V.P
-          </span> */}
           <h2 className="text-3xl md:text-4xl lg:text-5xl font-extrabold text-navy mt-2">
             Xác Nhận{" "}
             <span className="text-pink-primary">Tham Dự</span>
@@ -237,12 +347,23 @@ export default function RSVPSection() {
                 <div className="flex flex-col sm:flex-row gap-4 items-center justify-center relative">
                   {/* === NÚT ĐỒNG Ý === */}
                   <motion.button
-                    whileHover={{ scale: 1.08, rotate: [0, -2, 2, 0] }}
-                    whileTap={{ scale: 0.95 }}
+                    whileHover={{ scale: isSubmittingAttend ? 1 : 1.08, rotate: isSubmittingAttend ? 0 : [0, -2, 2, 0] }}
+                    whileTap={{ scale: isSubmittingAttend ? 1 : 0.95 }}
                     onClick={handleAttend}
-                    className="w-full sm:w-auto bg-linear-to-r from-green-400 to-emerald-500 text-white font-bold px-6 md:px-8 py-4 rounded-2xl shadow-lg hover:shadow-xl transition-shadow cursor-pointer text-sm md:text-base"
+                    disabled={isSubmittingAttend}
+                    className="w-full sm:w-auto bg-linear-to-r from-green-400 to-emerald-500 text-white font-bold px-6 md:px-8 py-4 rounded-2xl shadow-lg hover:shadow-xl transition-shadow cursor-pointer text-sm md:text-base flex items-center justify-center gap-2 disabled:opacity-75 disabled:cursor-not-allowed"
                   >
-                    Chắc chắn có mặt! 💝
+                    {isSubmittingAttend ? (
+                      <>
+                        <Loader2 className="w-5 h-5 animate-spin" />
+                        <span>Đang lưu vào danh sách...</span>
+                      </>
+                    ) : (
+                      <>
+                        <Sparkles className="w-5 h-5" />
+                        <span>Chắc chắn có mặt! 💝</span>
+                      </>
+                    )}
                   </motion.button>
 
                   {/* === NÚT TỪ CHỐI - CHẠY TRỐN KHI HOVER === */}
@@ -294,7 +415,7 @@ export default function RSVPSection() {
                   </motion.p>
                 )}
               </motion.div>
-            ) : (
+            ) : isAttending ? (
               /* === TRẠNG THÁI: ĐÃ XÁC NHẬN THAM DỰ === */
               <motion.div
                 key="confirmed"
@@ -316,10 +437,33 @@ export default function RSVPSection() {
                   Quỳnh Nhiên rất vui vì bạn sẽ đến! Nhớ mang theo nụ cười và
                   bụng đói nhé! 😋
                 </p>
-                <div className="inline-flex items-center gap-2 bg-green-100 text-green-700 font-bold px-6 py-2 rounded-full">
-                  <Check className="w-5 h-5" />
-                  Đã xác nhận tham dự
+                <div className="inline-flex items-center gap-2 bg-green-100 text-green-700 font-bold px-6 py-2.5 rounded-full text-sm">
+                  <Check className="w-5 h-5 text-green-600" />
+                    <span>Quỳnh Nhiên đã ghi nhận vào danh sách tham dự, cấm có được trốn đó 😒</span>
                 </div>
+              </motion.div>
+            ) : (
+              /* === TRẠNG THÁI: BẬN / TỪ CHỐI === */
+              <motion.div
+                key="declined"
+                initial={{ opacity: 0, scale: 0.8 }}
+                animate={{ opacity: 1, scale: 1 }}
+                className="text-center py-4"
+              >
+                <div className="text-5xl mb-4">🥺</div>
+                <h3 className="text-xl font-extrabold text-navy mb-2">
+                  Quỳnh Nhiên sẽ nhớ bạn lắm!
+                </h3>
+                <p className="text-navy/60 mb-4 text-sm">
+                  Dù bạn không thể đến dự trực tiếp, cảm ơn bạn rất nhiều vì đã chia vui từ xa! 💖
+                </p>
+                <button
+                  type="button"
+                  onClick={() => setIsAttending(null)}
+                  className="text-xs text-pink-primary font-bold underline hover:opacity-80 cursor-pointer"
+                >
+                  Đổi ý rồi, tôi muốn tham dự! 🙋‍♀️
+                </button>
               </motion.div>
             )}
           </AnimatePresence>
@@ -357,9 +501,10 @@ export default function RSVPSection() {
                     type="text"
                     value={name}
                     onChange={(e) => setName(e.target.value)}
+                    disabled={isExistInviteCode(guestCode)}
                     placeholder="Nhập tên bạn tại đây..."
                     required
-                    className="w-full px-4 py-3 rounded-xl border-2 border-pink-100 focus:border-pink-primary focus:ring-2 focus:ring-pink-primary/20 outline-none transition-all text-navy placeholder:text-navy/30 bg-pink-pastel/20"
+                    className="w-full px-4 py-3 rounded-xl border-2 border-pink-100 focus:border-pink-primary focus:ring-2 focus:ring-pink-primary/20 outline-none transition-all text-navy placeholder:text-navy/30 bg-pink-pastel/20 disabled:opacity-75 disabled:bg-slate-100 disabled:cursor-not-allowed disabled:border-slate-200"
                   />
                 </div>
 
@@ -381,13 +526,23 @@ export default function RSVPSection() {
                 {/* Nút gửi */}
                 <motion.button
                   type="submit"
-                  whileHover={{ scale: 1.03 }}
-                  whileTap={{ scale: 0.97 }}
-                  className="w-full bg-linear-to-r from-pink-primary to-purple text-white font-bold py-3.5 rounded-xl shadow-lg hover:shadow-xl transition-shadow cursor-pointer flex items-center justify-center gap-2"
+                  disabled={isSubmittingMessage}
+                  whileHover={{ scale: isSubmittingMessage ? 1 : 1.03 }}
+                  whileTap={{ scale: isSubmittingMessage ? 1 : 0.97 }}
+                  className="w-full bg-linear-to-r from-pink-primary to-purple text-white font-bold py-3.5 rounded-xl shadow-lg hover:shadow-xl transition-shadow cursor-pointer flex items-center justify-center gap-2 disabled:opacity-75 disabled:cursor-not-allowed"
                 >
-                  <Send className="w-5 h-5" />
-                  Gửi Lời Chúc
-                  <Heart className="w-4 h-4" />
+                  {isSubmittingMessage ? (
+                    <>
+                      <Loader2 className="w-5 h-5 animate-spin" />
+                      <span>Đang lưu vào sổ lưu bút...</span>
+                    </>
+                  ) : (
+                    <>
+                      <Send className="w-5 h-5" />
+                      <span>Gửi Lời Chúc</span>
+                      <Heart className="w-4 h-4" />
+                    </>
+                  )}
                 </motion.button>
               </motion.form>
             ) : (
@@ -409,12 +564,11 @@ export default function RSVPSection() {
                   Cảm ơn {name}! 🥰
                 </h3>
                 <p className="text-navy/60">
-                  Lời chúc của bạn đã được ghi nhận. Quỳnh Nhiên sẽ rất vui khi
-                  đọc được! ✨
+                  Lời chúc của bạn đã được lưu vào Google Sheet của Quỳnh Nhiên! ✨
                 </p>
 
                 {/* Hiển thị lại lời chúc đã gửi */}
-                <div className="mt-4 bg-pink-pastel/50 rounded-xl p-4 text-left">
+                <div className="mt-4 bg-pink-pastel/50 rounded-xl p-4 text-left border border-pink-100">
                   <p className="text-xs text-navy/40 uppercase font-bold mb-1">
                     Lời chúc từ {name}:
                   </p>
@@ -422,6 +576,17 @@ export default function RSVPSection() {
                     &ldquo;{message}&rdquo;
                   </p>
                 </div>
+
+                <button
+                  type="button"
+                  onClick={() => {
+                    setIsSubmitted(false);
+                    setMessage("");
+                  }}
+                  className="mt-4 text-xs text-pink-primary font-bold hover:underline cursor-pointer"
+                >
+                  Gửi thêm lời chúc khác ✍️
+                </button>
               </motion.div>
             )}
           </AnimatePresence>
@@ -505,6 +670,15 @@ export default function RSVPSection() {
                 >
                   😅 Thôi thôi, để tui đi cho rồi!
                 </motion.button>
+
+                {/* Tùy chọn xác nhận bận thật sự */}
+                <button
+                  type="button"
+                  onClick={handleDeclineConfirm}
+                  className="mt-3 text-xs text-navy/50 hover:text-navy/80 underline cursor-pointer"
+                >
+                  Bận thật sự, xin lỗi Quỳnh Nhiên nha 🥺
+                </button>
               </div>
             </motion.div>
           </motion.div>
